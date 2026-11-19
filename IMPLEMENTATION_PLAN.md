@@ -1,0 +1,15 @@
+﻿# Shopwise AI implementation plan
+
+| Phase | Delivered | Remaining or externally gated |
+|---|---|---|
+| 1. Storefront | Responsive homepage, demo catalog, search, filters, detail panels, wishlist, saved items, comparison, and recent views. | Live marketplace display requirements depend on affiliate authorization. |
+| 2. Persistence and identity | SQLAlchemy and Alembic migrations, PostgreSQL configuration, registration with immediate sign-in, guest browsing and browser-local collections, login and logout, profile, preferences, password recovery and change, account deletion, protected endpoints, account dashboard, and guest collection migration. | Verify the deployed SMTP and managed PostgreSQL services. |
+| 3. Product discovery | Persistent seed catalog, paginated search, authorized Amazon and Flipkart adapters, live lookup page with validated provider URLs, availability, prices when supplied, freshness, and exact brand-and-title matching across providers. | Live credentials and affiliate display approval. Provider data is ephemeral. Cross-retailer price display and live provider snapshots require confirmation of permitted use and supported offer data. |
+| 4. Machine learning | Reproducible synthetic content, collaborative, hybrid and popularity experiments, ranking metrics, model artifacts, live catalog ranking based on preferences and collection activity, and simulated pricing regression. | Exact paper reproduction and real-world model validation require original methodology and datasets. |
+| 5. OpenAI assistant | Configurable server-side SDK, catalog search and comparison tool, streamed answers, account-owned history, preferences and token tracking. A labeled catalog mode supports local testing without credentials. Product pages and assistant cards link to retailer searches. | Live OpenAI credential and model verification. |
+| 6. Research and analytics | Original paper results, reproducibility notes, downloadable synthetic reports, experiment history with per-run artifacts, model metric comparisons and interactive pricing lab. | Exact paper reproduction requires the original dataset and experiment configuration. |
+| 7. Admin, testing and deployment | Admin role, aggregate usage, demo price and description editing, audit and price snapshots, readiness checks, Dockerfiles, Compose health checks, and a CI job that verifies the built stack with actual SMTP delivery through Mailpit. | Run hosted CI, verify managed infrastructure, and configure production monitoring. |
+
+Pricing experiments apply to a synthetic merchant. Account-owned recommendation signals use explicit category preferences and catalog activity. The metrics in the synthetic reports evaluate separate trained baselines.
+
+Local checks cover the production build, API tests on SQLite and PostgreSQL, a Chromium shopping journey using a loopback SMTP inbox and mocked paid services, three ML tests, and the disposable SQLite upgrade/downgrade cycle. The repeatable preview smoke check also passed with local Next.js, FastAPI, SQLite, and Mailpit. Docker, hosted services, and real provider credentials are still required for deployment verification.

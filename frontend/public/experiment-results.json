@@ -1,0 +1,104 @@
+{
+  "version": "synthetic-v1",
+  "source": "Synthetic Shopwise AI experiments",
+  "seed": 42,
+  "run_id": "20261119T074259-cfa441c5ff0d41bf89e20447ecebad00",
+  "completed_at": "2026-11-19T07:42:59.214676+00:00",
+  "numpy": "2.4.2",
+  "scikit_learn": "1.7.2",
+  "recommendation": {
+    "k": 5,
+    "users": 120,
+    "items": 60,
+    "train_events": 1080,
+    "test_events": 360,
+    "split": "First nine synthetic interactions per user for training, final three for evaluation",
+    "models": {
+      "Popularity": {
+        "precision": 0.051667,
+        "recall": 0.086111,
+        "f1": 0.064583,
+        "ndcg": 0.062323,
+        "map": 0.032315,
+        "coverage": 0.166667,
+        "diversity": 0.835833
+      },
+      "Content-based": {
+        "precision": 0.16,
+        "recall": 0.266667,
+        "f1": 0.2,
+        "ndcg": 0.232779,
+        "map": 0.143009,
+        "coverage": 1.0,
+        "diversity": 0.045
+      },
+      "Collaborative cosine": {
+        "precision": 0.128333,
+        "recall": 0.213889,
+        "f1": 0.160417,
+        "ndcg": 0.179693,
+        "map": 0.10625,
+        "coverage": 1.0,
+        "diversity": 0.629167
+      },
+      "Hybrid": {
+        "precision": 0.148333,
+        "recall": 0.247222,
+        "f1": 0.185417,
+        "ndcg": 0.199478,
+        "map": 0.11588,
+        "coverage": 1.0,
+        "diversity": 0.13
+      }
+    }
+  },
+  "pricing": {
+    "features": [
+      "previous merchant price",
+      "demand index",
+      "inventory",
+      "seasonal index",
+      "simulated competitor price",
+      "unit cost"
+    ],
+    "train_rows": 320,
+    "test_rows": 80,
+    "split": "First 320 simulated time steps for training, final 80 for evaluation",
+    "models": {
+      "Historical merchant price": {
+        "mae": 1074.6832,
+        "mse": 1925813.8655,
+        "rmse": 1387.737,
+        "r2": -0.809603,
+        "mean_simulated_profit": 80397.0305
+      },
+      "Ridge regression": {
+        "mae": 452.4768,
+        "mse": 414025.339,
+        "rmse": 643.448,
+        "r2": 0.610958,
+        "mean_simulated_profit": 86651.8618
+      },
+      "Random forest": {
+        "mae": 220.5521,
+        "mse": 86672.0849,
+        "rmse": 294.4012,
+        "r2": 0.918558,
+        "mean_simulated_profit": 87796.3211
+      }
+    },
+    "ridge": {
+      "intercept": 4257.064354020509,
+      "coefficients": [
+        0.012838800457968301,
+        2558.273788648892,
+        -17.397824672375886,
+        300.09739339092135,
+        0.17963799208871792,
+        0.47633843043966095
+      ],
+      "minimum": 5000,
+      "maximum": 12000
+    }
+  }
+}

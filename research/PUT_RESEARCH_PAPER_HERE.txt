@@ -1,0 +1,1 @@
+Add your original research PDF as research/source_paper.pdf before giving this repository to Gemini.

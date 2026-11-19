@@ -1,0 +1,75 @@
+services:
+  mail:
+    image: axllent/mailpit:v1.33.1
+    ports:
+      - "127.0.0.1:8025:8025"
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: retail
+      POSTGRES_PASSWORD: retail_dev_password
+      POSTGRES_DB: retail
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retail -d retail"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  backend:
+    build: ./backend
+    command: ["sh", "-c", "alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://retail:retail_dev_password@db:5432/retail
+      FRONTEND_ORIGIN: http://localhost:3000
+      APP_ENV: development
+      SHOPPING_AI_PROVIDER: ${SHOPPING_AI_PROVIDER:-openai}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      OPENAI_ESTIMATE_INPUT_USD_PER_MILLION: ${OPENAI_ESTIMATE_INPUT_USD_PER_MILLION:-}
+      OPENAI_ESTIMATE_OUTPUT_USD_PER_MILLION: ${OPENAI_ESTIMATE_OUTPUT_USD_PER_MILLION:-}
+      SMTP_HOST: ${SMTP_HOST:-mail}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_FROM: ${SMTP_FROM:-shopwise@example.test}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-false}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      AMAZON_CREDENTIAL_ID: ${AMAZON_CREDENTIAL_ID:-}
+      AMAZON_CREDENTIAL_SECRET: ${AMAZON_CREDENTIAL_SECRET:-}
+      AMAZON_CREDENTIAL_VERSION: ${AMAZON_CREDENTIAL_VERSION:-3.2}
+      AMAZON_PARTNER_TAG: ${AMAZON_PARTNER_TAG:-}
+      FLIPKART_AFFILIATE_ID: ${FLIPKART_AFFILIATE_ID:-}
+      FLIPKART_AFFILIATE_TOKEN: ${FLIPKART_AFFILIATE_TOKEN:-}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      mail:
+        condition: service_started
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/api/ready', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+  frontend:
+    build: ./frontend
+    environment:
+      API_INTERNAL_URL: http://backend:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/research', { signal: AbortSignal.timeout(4000) }).then(r => { if (!r.ok) process.exitCode=1 }).catch(() => { process.exitCode=1 })"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+volumes:
+  pgdata:
